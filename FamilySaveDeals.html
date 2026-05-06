@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FamilySave</title>
+<style>
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:Arial,sans-serif; }
+
+/* ── WELCOME ── */
+.welcome {
+  background:linear-gradient(160deg,#1a8f68 0%,#1D9E75 60%,#25b585 100%);
+  min-height:100vh;
+  padding:40px 20px 30px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.logo { font-size:38px; font-weight:900; color:white; text-align:center; }
+.logo span { color:#a8ffd8; }
+.tagline { font-size:13px; color:rgba(255,255,255,0.75); margin:4px 0 32px; text-align:center; }
+
+.why-box {
+  background:rgba(0,0,0,0.15);
+  border-radius:22px;
+  padding:22px 18px;
+  width:100%;
+  max-width:380px;
+  margin-bottom:24px;
+}
+.why-title { font-size:16px; font-weight:900; color:white; margin-bottom:16px; text-align:center; }
+.why-row { display:flex; align-items:flex-start; gap:12px; margin-bottom:13px; }
+.why-row .wi { font-size:24px; flex-shrink:0; }
+.why-row .wt { font-size:13px; color:rgba(255,255,255,0.9); line-height:1.55; }
+.why-row .wt b { color:white; }
+.privacy { border-top:1px solid rgba(255,255,255,0.2); margin-top:14px; padding-top:12px; font-size:11px; color:rgba(255,255,255,0.55); text-align:center; line-height:1.6; }
+
+.btn-loc  { width:100%; max-width:380px; background:white; color:#1D9E75; border:none; border-radius:16px; padding:18px; font-size:18px; font-weight:900; cursor:pointer; font-family:Arial,sans-serif; margin-bottom:12px; box-shadow:0 4px 20px rgba(0,0,0,0.15); }
+.btn-skip { width:100%; max-width:380px; background:transparent; color:rgba(255,255,255,0.7); border:2px solid rgba(255,255,255,0.3); border-radius:16px; padding:13px; font-size:14px; font-weight:700; cursor:pointer; font-family:Arial,sans-serif; }
+.loc-status { margin-top:18px; font-size:13px; color:rgba(255,255,255,0.9); text-align:center; line-height:1.6; max-width:320px; min-height:22px; }
+
+/* ── MAIN APP ── */
+.app { display:none; background:#f0f2f5; min-height:100vh; }
+
+.app-header { background:#1D9E75; color:white; padding:14px 16px 12px; }
+.app-header h1 { font-size:20px; font-weight:900; }
+.app-loc { font-size:12px; opacity:0.85; margin-top:3px; }
+
+/* Summary bar */
+.summary { display:flex; gap:10px; padding:12px; background:#1D9E75; border-top:1px solid rgba(255,255,255,0.2); }
+.sum-box { flex:1; background:rgba(255,255,255,0.2); border-radius:12px; padding:10px 6px; text-align:center; }
+.sum-n { font-size:22px; font-weight:900; color:white; }
+.sum-l { font-size:10px; color:rgba(255,255,255,0.8); margin-top:2px; }
+
+/* Nav */
+.nav { display:flex; background:white; border-bottom:1px solid #e0e0e0; }
+.nb { flex:1; padding:11px 4px; text-align:center; cursor:pointer; border:none; background:white; font-family:Arial,sans-serif; }
+.nb .ni { font-size:20px; }
+.nb .nl { font-size:10px; font-weight:700; color:#aaa; display:block; margin-top:1px; }
+.nb.on .nl { color:#1D9E75; }
+
+/* Pages */
+.pg { display:none; }
+.pg.show { display:block; padding-bottom:20px; }
+
+/* ── STORE CARDS ── */
+.store-wrap { padding:12px; }
+.sec-lbl { font-size:11px; font-weight:900; color:#999; text-transform:uppercase; letter-spacing:.06em; margin:4px 0 10px; }
+
+.scard {
+  background:white;
+  border-radius:16px;
+  border:1px solid #e5e5e5;
+  margin-bottom:12px;
+  overflow:hidden;
+  box-shadow:0 1px 6px rgba(0,0,0,0.05);
+}
+
+/* Store top bar */
+.scard-top { display:flex; align-items:center; gap:12px; padding:14px 14px 12px; }
+.scard-logo {
+  width:48px; height:48px;
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:900; color:white;
+  flex-shrink:0;
+}
+.scard-info { flex:1; }
+.scard-name { font-size:15px; font-weight:900; color:#1a1a1a; }
+.scard-sub  { font-size:11px; color:#aaa; margin-top:2px; }
+
+/* Deal count badges */
+.scard-deals { display:flex; gap:6px; padding:0 14px 12px; flex-wrap:wrap; }
+.badge {
+  display:flex; flex-direction:column; align-items:center;
+  background:#f5f5f5; border-radius:10px;
+  padding:7px 10px; min-width:56px;
+}
+.badge.bogo  { background:#E3F2FD; }
+.badge.hot   { background:#FFEBEE; }
+.badge.sale  { background:#E8F5E9; }
+.badge.clip  { background:#FFF8E1; }
+.badge-n { font-size:18px; font-weight:900; color:#222; line-height:1; }
+.badge.bogo .badge-n { color:#1565c0; }
+.badge.hot  .badge-n { color:#c62828; }
+.badge.sale .badge-n { color:#2e7d32; }
+.badge.clip .badge-n { color:#f57f17; }
+.badge-l { font-size:9px; font-weight:700; color:#888; margin-top:3px; text-transform:uppercase; }
+.badge.bogo .badge-l { color:#1565c0; }
+.badge.hot  .badge-l { color:#c62828; }
+.badge.sale .badge-l { color:#2e7d32; }
+.badge.clip .badge-l { color:#f57f17; }
+
+/* Scraper notice */
+.scraper-note { font-size:10px; color:#bbb; padding:0 14px 10px; font-style:italic; }
+
+/* Action buttons */
+.scard-btns { display:flex; border-top:1px solid #f0f0f0; }
+.sbtn { flex:1; padding:12px 6px; text-align:center; text-decoration:none; font-size:12px; font-weight:700; color:#555; background:white; border:none; cursor:pointer; font-family:Arial,sans-serif; display:block; }
+.sbtn:first-child { border-right:1px solid #f0f0f0; }
+.sbtn.grn { color:#1D9E75; }
+.sbtn small { font-size:10px; color:#bbb; font-weight:normal; display:block; margin-top:2px; }
+
+/* About */
+.about-wrap { padding:12px; }
+.about-box { background:white; border-radius:16px; padding:20px; margin-bottom:12px; }
+.about-box h2 { color:#1D9E75; margin-bottom:10px; font-size:17px; }
+.about-box p { font-size:13px; color:#555; line-height:1.7; margin-bottom:10px; }
+.about-list li { font-size:13px; color:#555; line-height:2.2; list-style:none; }
+.coming { background:#E8F5E9; border-radius:12px; padding:14px 16px; }
+.coming h3 { font-size:13px; font-weight:900; color:#1D9E75; margin-bottom:8px; }
+.coming li { font-size:12px; color:#2e7d32; line-height:2; list-style:none; }
+
+.empty { text-align:center; padding:50px 20px; color:#ccc; font-size:14px; }
+
+/* ── PREMIUM PAGE ── */
+.prem-hero { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%); padding:28px 20px; text-align:center; color:white; }
+.prem-badge { display:inline-block; background:gold; color:#333; font-size:11px; font-weight:900; padding:4px 14px; border-radius:20px; margin-bottom:12px; letter-spacing:.05em; }
+.prem-title { font-size:26px; font-weight:900; margin-bottom:6px; }
+.prem-title span { color:gold; }
+.prem-sub { font-size:13px; color:rgba(255,255,255,0.75); line-height:1.6; }
+.prem-price { font-size:42px; font-weight:900; color:gold; margin:16px 0 4px; }
+.prem-price sup { font-size:20px; vertical-align:super; }
+.prem-price-sub { font-size:12px; color:rgba(255,255,255,0.6); }
+
+.prem-section { padding:12px; }
+.prem-card { background:white; border-radius:16px; padding:18px; margin-bottom:12px; border:1px solid #e5e5e5; box-shadow:0 1px 6px rgba(0,0,0,0.05); }
+.prem-card-title { font-size:15px; font-weight:900; color:#1a1a1a; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+
+.perk { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid #f5f5f5; }
+.perk:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.perk-ico { font-size:26px; flex-shrink:0; }
+.perk-info { flex:1; }
+.perk-name { font-size:14px; font-weight:900; color:#222; }
+.perk-desc { font-size:12px; color:#888; margin-top:3px; line-height:1.5; }
+.perk-tag { display:inline-block; font-size:10px; font-weight:900; padding:2px 8px; border-radius:10px; margin-top:5px; background:#E8F5E9; color:#2e7d32; }
+
+.restaurant-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+.rest-item { background:#f9f9f9; border-radius:10px; padding:10px; text-align:center; border:1px solid #eee; }
+.rest-ico { font-size:24px; }
+.rest-name { font-size:11px; font-weight:700; color:#333; margin-top:4px; }
+.rest-disc { font-size:12px; font-weight:900; color:#1D9E75; margin-top:2px; }
+
+.join-btn { width:100%; background:linear-gradient(135deg,#1D9E75,#25b585); color:white; border:none; border-radius:16px; padding:18px; font-size:17px; font-weight:900; cursor:pointer; font-family:Arial,sans-serif; margin-bottom:10px; box-shadow:0 4px 14px rgba(29,158,117,0.35); }
+.join-note { font-size:11px; color:#aaa; text-align:center; line-height:1.6; }
+.compare { width:100%; border-collapse:collapse; font-size:13px; }
+.compare th { background:#f5f5f5; padding:10px 12px; text-align:left; font-weight:900; color:#555; font-size:11px; }
+.compare td { padding:10px 12px; border-top:1px solid #f0f0f0; color:#333; }
+.compare .chk { color:#1D9E75; font-weight:900; }
+.compare .cross { color:#ddd; font-weight:900; }
+.compare .highlight { background:#E8F5E9; font-weight:700; }
+
+
+/* ── AD VIEWER PANEL ── */
+.ad-panel {
+  display:none;
+  background:white;
+  position:absolute;
+  top:0; left:0; right:0; bottom:0;
+  z-index:50;
+  flex-direction:column;
+}
+.ad-panel.open { display:flex; }
+.ad-panel-header {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 14px;
+  color:white;
+  flex-shrink:0;
+}
+.ad-panel-title { font-size:15px; font-weight:900; flex:1; }
+.ad-back {
+  background:rgba(255,255,255,0.2);
+  color:white;
+  border:none;
+  border-radius:20px;
+  padding:7px 16px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  flex-shrink:0;
+}
+.ad-open-btn {
+  background:rgba(255,255,255,0.15);
+  color:white;
+  border:none;
+  border-radius:20px;
+  padding:7px 14px;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  flex-shrink:0;
+  text-decoration:none;
+  display:inline-block;
+}
+.ad-iframe {
+  flex:1;
+  border:none;
+  width:100%;
+}
+.ad-blocked {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:30px 20px;
+  text-align:center;
+  background:#f5f5f5;
+}
+.ad-blocked .bi { font-size:50px; margin-bottom:14px; }
+.ad-blocked h3 { font-size:17px; font-weight:900; color:#222; margin-bottom:8px; }
+.ad-blocked p { font-size:13px; color:#777; line-height:1.6; margin-bottom:20px; }
+.ad-blocked-btn {
+  background:#1D9E75;
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:14px 28px;
+  font-size:15px;
+  font-weight:900;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  text-decoration:none;
+  display:inline-block;
+}
+.app-wrap { position:relative; }
+
+
+/* ── LOCATION CHANGE BAR ── */
+.loc-bar {
+  background:#145f45;
+  padding:8px 12px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.loc-bar-text {
+  flex:1;
+  font-size:12px;
+  color:rgba(255,255,255,0.9);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.loc-bar-btn {
+  background:rgba(255,255,255,0.2);
+  color:white;
+  border:none;
+  border-radius:20px;
+  padding:6px 14px;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  font-family:Arial,sans-serif;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+
+/* ── LOCATION CHANGE POPUP ── */
+.loc-popup {
+  display:none;
+  background:white;
+  border-radius:0 0 20px 20px;
+  padding:18px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.15);
+  border-top:3px solid #1D9E75;
+}
+.loc-popup.open { display:block; }
+.loc-popup-title { font-size:15px; font-weight:900; color:#222; margin-bottom:14px; }
+.loc-option {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:13px 14px;
+  border-radius:12px;
+  border:1.5px solid #eee;
+  margin-bottom:10px;
+  cursor:pointer;
+  background:white;
+  width:100%;
+  font-family:Arial,sans-serif;
+  text-align:left;
+}
+.loc-option:active { background:#f5f5f5; }
+.loc-option .lo-ico { font-size:22px; flex-shrink:0; }
+.loc-option .lo-info { flex:1; }
+.loc-option .lo-title { font-size:14px; font-weight:700; color:#222; }
+.loc-option .lo-sub { font-size:11px; color:#aaa; margin-top:2px; }
+.loc-option.active-loc { border-color:#1D9E75; background:#f0fdf8; }
+.loc-option.active-loc .lo-title { color:#1D9E75; }
+.loc-zip-row { display:flex; gap:8px; margin-top:4px; }
+.loc-zip-input {
+  flex:1; padding:12px 14px; border-radius:12px;
+  border:1.5px solid #ddd; font-size:16px;
+  font-family:Arial,sans-serif; outline:none;
+}
+.loc-zip-input:focus { border-color:#1D9E75; }
+.loc-zip-go {
+  background:#1D9E75; color:white; border:none;
+  border-radius:12px; padding:12px 20px;
+  font-size:15px; font-weight:900;
+  cursor:pointer; font-family:Arial,sans-serif;
+}
+.loc-close {
+  width:100%; background:#f5f5f5; color:#888;
+  border:none; border-radius:12px; padding:11px;
+  font-size:13px; font-weight:700; cursor:pointer;
+  font-family:Arial,sans-serif; margin-top:6px;
+}
+.loc-status2 { font-size:12px; color:#888; margin-top:8px; text-align:center; min-height:18px; }
+
+/* Popular cities quick select */
+.city-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.city-chip {
+  background:#f0f0f0; color:#444; border:none;
+  border-radius:20px; padding:6px 14px;
+  font-size:12px; font-weight:700;
+  cursor:pointer; font-family:Arial,sans-serif;
+}
+.city-chip:active { background:#1D9E75; color:white; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME SCREEN ══ -->
+<div class="welcome" id="welcome">
+
+  <div class="logo">Family<span>Save</span></div>
+  <div class="tagline">Free grocery deal finder — powered by your location</div>
+
+  <div class="why-box">
+    <div class="why-title">📍 Why we use your location</div>
+    <div class="why-row">
+      <div class="wi">🛒</div>
+      <div class="wt"><b>Find stores near you</b> — see every grocery store, warehouse club, and discount store within miles of where you are right now</div>
+    </div>
+    <div class="why-row">
+      <div class="wi">🏷️</div>
+      <div class="wt"><b>Real weekly deal counts</b> — see exactly how many deals, BOGO offers, and hot sales each nearby store has this week</div>
+    </div>
+    <div class="why-row">
+      <div class="wi">🔥</div>
+      <div class="wt"><b>BOGO & hot deals near you</b> — never miss a Buy One Get One Free or red hot deal at a store near you</div>
+    </div>
+    <div class="why-row">
+      <div class="wi">⛽</div>
+      <div class="wt"><b>Fuel points & rewards</b> — find which nearby stores are offering fuel points and loyalty rewards this week</div>
+    </div>
+    <div class="why-row">
+      <div class="wi">💰</div>
+      <div class="wt"><b>Save $50+ per week</b> — families using FamilySave save an average of $50 or more every week on groceries</div>
+    </div>
+    <div class="privacy">🔒 Your location is <b>never stored, sold, or shared</b>. Used only to find stores near you.</div>
+  </div>
+
+  <button class="btn-loc" onclick="findMe()" id="loc-btn">📍 Find Stores Near Me</button>
+  <button class="btn-skip" onclick="goApp(null)">Skip — browse without location</button>
+  <div class="loc-status" id="loc-status"></div>
+
+  <!-- ZIP CODE FALLBACK - always visible as option -->
+  <div id="zip-box" style="width:100%;max-width:380px;margin-top:16px;background:rgba(0,0,0,0.2);border-radius:16px;padding:16px 18px;">
+    <div style="font-size:13px;color:rgba(255,255,255,0.8);margin-bottom:10px;text-align:center;">— or enter your zip code —</div>
+    <div style="display:flex;gap:8px;">
+      <input id="zip-input" type="tel" maxlength="5" placeholder="e.g. 32168" oninput="this.value=this.value.replace(/\D/g,'')" style="flex:1;padding:13px 16px;border-radius:12px;border:none;font-size:16px;font-family:Arial,sans-serif;outline:none;" />
+      <button onclick="doZip()" style="background:#1D9E75;color:white;border:none;border-radius:12px;padding:13px 20px;font-size:15px;font-weight:900;cursor:pointer;font-family:Arial,sans-serif;">Go</button>
+    </div>
+  </div>
+
+  <!-- PREMIUM PREVIEW ON WELCOME SCREEN -->
+  <div style="width:100%;max-width:380px;margin-top:28px;">
+
+    <div style="text-align:center;margin-bottom:14px;">
+      <div style="display:inline-block;background:gold;color:#222;font-size:11px;font-weight:900;padding:4px 16px;border-radius:20px;letter-spacing:.05em;">⭐ FAMILYSAVE PREMIUM</div>
+    </div>
+
+    <div style="background:rgba(0,0,0,0.2);border-radius:20px;padding:20px 18px;margin-bottom:14px;">
+      <div style="font-size:16px;font-weight:900;color:white;text-align:center;margin-bottom:4px;">Save money <span style="color:gold;">everywhere</span> you eat</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.7);text-align:center;margin-bottom:16px;">Exclusive discounts at restaurants & fast food near you</div>
+
+      <!-- Restaurant icons grid -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;">
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🍔</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">McDonald's</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">30% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🐔</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">Chick-fil-A</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">20% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🌮</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">Taco Bell</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">25% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🍕</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">Domino's</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">25% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🥪</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">Subway</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">20% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">☕</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">Starbucks</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">15% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🍗</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">KFC</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">25% off</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.12);border-radius:12px;padding:10px 4px;text-align:center;">
+          <div style="font-size:22px;">🍽️</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.8);margin-top:3px;font-weight:700;">+100 more</div>
+          <div style="font-size:10px;color:gold;font-weight:900;">Near you</div>
+        </div>
+      </div>
+
+      <!-- What you get -->
+      <div style="background:rgba(255,255,255,0.08);border-radius:14px;padding:14px;margin-bottom:14px;">
+        <div style="font-size:12px;color:rgba(255,255,255,0.95);line-height:2;">
+          ✅ <b style="color:white;">Restaurant & fast food discounts</b> near you<br>
+          ✅ <b style="color:white;">Weekly grocery deal alerts</b> every Sunday<br>
+          ✅ <b style="color:white;">Price comparison</b> across all nearby stores<br>
+          ✅ <b style="color:white;">Smart grocery list</b> with deal matching<br>
+          ✅ <b style="color:white;">BOGO alerts</b> at stores near you<br>
+          ✅ <b style="color:white;">Fuel point tracker</b> by store
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-size:38px;font-weight:900;color:gold;line-height:1;">$10<span style="font-size:16px;color:rgba(255,255,255,0.7);font-weight:normal;">/month</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">Cancel anytime · Covers your whole family</div>
+      </div>
+
+      <!-- Apple Pay / iPhone join button -->
+      <button onclick="joinPremium()" style="width:100%;background:black;color:white;border:none;border-radius:14px;padding:16px;font-size:16px;font-weight:900;cursor:pointer;font-family:Arial,sans-serif;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px;">
+        <span style="font-size:20px;"></span> Join with Apple Pay
+      </button>
+      <button onclick="joinPremium()" style="width:100%;background:gold;color:#222;border:none;border-radius:14px;padding:14px;font-size:15px;font-weight:900;cursor:pointer;font-family:Arial,sans-serif;">
+        ⭐ Join Premium — $10/month
+      </button>
+
+      <div style="text-align:center;margin-top:10px;font-size:10px;color:rgba(255,255,255,0.5);line-height:1.6;">
+        🔒 Secure payment &nbsp;·&nbsp; Cancel anytime<br>
+        Works on iPhone, iPad &amp; Apple Watch
+      </div>
+    </div>
+
+    <!-- App Store badge hint -->
+    <div style="background:rgba(0,0,0,0.25);border-radius:16px;padding:14px 16px;text-align:center;">
+      <div style="font-size:13px;font-weight:900;color:white;margin-bottom:4px;">📱 Coming to the App Store</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.6;">FamilySave is coming to iPhone &amp; iPad.<br>Sign up now to get 3 months free when we launch!</div>
+      <button onclick="alert('Thank you! We will notify you when the iPhone app launches!')" style="margin-top:10px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:10px;padding:9px 20px;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;">🔔 Notify Me at Launch</button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div class="app" id="app"><div class="app-wrap" id="app-wrap">
+
+  <div class="app-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h1>🏷️ FamilySave</h1>
+      <div style="font-size:11px;opacity:0.7;">Weekly Deals Finder</div>
+    </div>
+  </div>
+
+  <!-- LOCATION BAR - always visible at top of app -->
+  <div class="loc-bar">
+    <span style="font-size:14px;">📍</span>
+    <div class="loc-bar-text" id="app-loc">Finding your location...</div>
+    <button class="loc-bar-btn" onclick="toggleLocPopup()">Change Location</button>
+  </div>
+
+  <!-- LOCATION CHANGE POPUP -->
+  <div class="loc-popup" id="loc-popup">
+    <div class="loc-popup-title">📍 Change Your Location</div>
+
+    <!-- GPS option -->
+    <button class="loc-option" id="loc-opt-gps" onclick="changeToGPS()">
+      <div class="lo-ico">🛰️</div>
+      <div class="lo-info">
+        <div class="lo-title">Use My Current Location</div>
+        <div class="lo-sub">GPS detects where you are right now</div>
+      </div>
+    </button>
+
+    <!-- Zip code option -->
+    <div style="margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;">Enter a zip code</div>
+      <div class="loc-zip-row">
+        <input class="loc-zip-input" id="loc-zip2" type="tel" maxlength="5" placeholder="e.g. 32168 or 85226" oninput="this.value=this.value.replace(/\D/g,\'\')">
+        <button class="loc-zip-go" onclick="changeToZip()">Go</button>
+      </div>
+    </div>
+
+    <!-- Popular cities quick pick -->
+    <div style="font-size:12px;font-weight:700;color:#888;margin-bottom:8px;">Quick pick a city</div>
+    <div class="city-chips">
+      <button class="city-chip" onclick="changeToCity(\'New Smyrna Beach, FL\',29.0258,-80.9270)">New Smyrna Beach FL</button>
+      <button class="city-chip" onclick="changeToCity(\'Daytona Beach, FL\',29.2108,-81.0228)">Daytona Beach FL</button>
+      <button class="city-chip" onclick="changeToCity(\'Chandler, AZ\',33.3062,-111.8413)">Chandler AZ</button>
+      <button class="city-chip" onclick="changeToCity(\'Orlando, FL\',28.5383,-81.3792)">Orlando FL</button>
+      <button class="city-chip" onclick="changeToCity(\'Miami, FL\',25.7617,-80.1918)">Miami FL</button>
+      <button class="city-chip" onclick="changeToCity(\'Tampa, FL\',27.9506,-82.4572)">Tampa FL</button>
+      <button class="city-chip" onclick="changeToCity(\'Atlanta, GA\',33.7490,-84.3880)">Atlanta GA</button>
+      <button class="city-chip" onclick="changeToCity(\'Houston, TX\',29.7604,-95.3698)">Houston TX</button>
+      <button class="city-chip" onclick="changeToCity(\'Phoenix, AZ\',33.4484,-112.0740)">Phoenix AZ</button>
+      <button class="city-chip" onclick="changeToCity(\'Charlotte, NC\',35.2271,-80.8431)">Charlotte NC</button>
+      <button class="city-chip" onclick="changeToCity(\'Dallas, TX\',32.7767,-96.7970)">Dallas TX</button>
+      <button class="city-chip" onclick="changeToCity(\'New York, NY\',40.7128,-74.0060)">New York NY</button>
+    </div>
+
+    <div class="loc-status2" id="loc-status2"></div>
+    <button class="loc-close" onclick="toggleLocPopup()">✕ Cancel</button>
+  </div>
+
+  <!-- Summary totals bar -->
+  <div class="summary">
+    <div class="sum-box"><div class="sum-n" id="sum-stores">0</div><div class="sum-l">Stores Found</div></div>
+    <div class="sum-box"><div class="sum-n" id="sum-deals">0</div><div class="sum-l">Total Deals</div></div>
+    <div class="sum-box"><div class="sum-n" id="sum-bogo">0</div><div class="sum-l">BOGO Offers</div></div>
+    <div class="sum-box"><div class="sum-n" id="sum-hot">0</div><div class="sum-l">Hot Deals</div></div>
+  </div>
+
+  <div class="nav">
+    <div class="nb on" id="nb-s" onclick="setPage('stores',this)"><div class="ni">🗺️</div><span class="nl">Stores</span></div>
+    <div class="nb" id="nb-p" onclick="setPage('premium',this)"><div class="ni">⭐</div><span class="nl">Premium</span></div>
+    <div class="nb" id="nb-a" onclick="setPage('about',this)"><div class="ni">ℹ️</div><span class="nl">About</span></div>
+  </div>
+
+  <div class="pg show" id="pg-stores">
+    <div class="store-wrap" id="store-list">
+      <div class="empty">Finding stores near you...</div>
+    </div>
+  </div>
+
+  <div class="pg" id="pg-about">
+    <div class="about-wrap">
+      <div class="about-box">
+        <h2>About FamilySave</h2>
+        <p>FamilySave uses your GPS to find grocery stores near you and shows how many deals, BOGO offers, and hot sales each store has this week — so you know exactly where to shop before you leave home.</p>
+        <p><b>Stores we support:</b></p>
+        <ul class="about-list">
+          <li>🛒 Walmart &amp; Sam's Club</li>
+          <li>🛒 Publix &amp; Winn-Dixie</li>
+          <li>🛒 Albertsons &amp; Safeway</li>
+          <li>🛒 Kroger &amp; Fry's Food Store</li>
+          <li>🛒 Target, Aldi, Costco</li>
+          <li>🛒 Dollar General &amp; Dollar Tree</li>
+          <li>🛒 Food Lion &amp; Harris Teeter</li>
+          <li>🛒 Bashas', Sprouts, Whole Foods</li>
+          <li>🛒 Trader Joe's</li>
+        </ul>
+      </div>
+      <div class="about-box coming">
+        <h3>🚀 Coming Soon — with scrapers</h3>
+        <ul>
+          <li>✅ Automatic deal counts pulled weekly</li>
+          <li>✅ BOGO alerts at stores near you</li>
+          <li>✅ Price comparison across stores</li>
+          <li>✅ Weekly deal notifications</li>
+          <li>✅ Fuel point tracker by store</li>
+          <li>✅ Grocery list with deal matching</li>
+        </ul>
+      </div>
+    </div>
+  
+  <div class="pg" id="pg-premium">
+
+    <!-- Hero -->
+    <div class="prem-hero">
+      <div class="prem-badge">⭐ FAMILYSAVE PREMIUM</div>
+      <div class="prem-title">Unlock <span>Big Savings</span><br>at Restaurants & Fast Food</div>
+      <div class="prem-sub">Get exclusive discounts at hundreds of restaurants and fast food spots near you — plus all grocery deal features</div>
+      <div class="prem-price"><sup>$</sup>10<sup style="font-size:16px;">/mo</sup></div>
+      <div class="prem-price-sub">Cancel anytime · No contracts · Family plan included</div>
+    </div>
+
+    <div class="prem-section">
+
+      <!-- Restaurant discounts -->
+      <div class="prem-card">
+        <div class="prem-card-title">🍔 Fast Food & Restaurant Discounts</div>
+        <div class="perk">
+          <div class="perk-ico">🍔</div>
+          <div class="perk-info">
+            <div class="perk-name">Fast Food Deals</div>
+            <div class="perk-desc">Exclusive discounts at McDonald's, Burger King, Wendy's, Chick-fil-A, Taco Bell, Subway, and more near you</div>
+            <span class="perk-tag">Up to 30% off</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">🍕</div>
+          <div class="perk-info">
+            <div class="perk-name">Pizza & Delivery</div>
+            <div class="perk-desc">Special member pricing at Domino's, Pizza Hut, Papa John's, and local pizzerias</div>
+            <span class="perk-tag">Up to 25% off</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">🍽️</div>
+          <div class="perk-info">
+            <div class="perk-name">Sit-Down Restaurants</div>
+            <div class="perk-desc">Member discounts at Applebee's, Chili's, Olive Garden, Denny's, IHOP, and local restaurants in your area</div>
+            <span class="perk-tag">Up to 20% off</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">☕</div>
+          <div class="perk-info">
+            <div class="perk-name">Coffee & Snacks</div>
+            <div class="perk-desc">Deals at Starbucks, Dunkin', Dutch Bros, and local coffee shops near you</div>
+            <span class="perk-tag">Up to 15% off</span>
+          </div>
+        </div>
+
+        <div class="restaurant-grid">
+          <div class="rest-item"><div class="rest-ico">🍔</div><div class="rest-name">McDonald's</div><div class="rest-disc">Up to 30% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🐔</div><div class="rest-name">Chick-fil-A</div><div class="rest-disc">Up to 20% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🌮</div><div class="rest-name">Taco Bell</div><div class="rest-disc">Up to 25% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🥪</div><div class="rest-name">Subway</div><div class="rest-disc">Up to 20% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🍕</div><div class="rest-name">Domino's</div><div class="rest-disc">Up to 25% off</div></div>
+          <div class="rest-item"><div class="rest-ico">☕</div><div class="rest-name">Starbucks</div><div class="rest-disc">Up to 15% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🍗</div><div class="rest-name">KFC</div><div class="rest-disc">Up to 25% off</div></div>
+          <div class="rest-item"><div class="rest-ico">🍟</div><div class="rest-name">Burger King</div><div class="rest-disc">Up to 30% off</div></div>
+        </div>
+      </div>
+
+      <!-- Grocery perks -->
+      <div class="prem-card">
+        <div class="prem-card-title">🛒 Premium Grocery Features</div>
+        <div class="perk">
+          <div class="perk-ico">🔔</div>
+          <div class="perk-info">
+            <div class="perk-name">Early Deal Alerts</div>
+            <div class="perk-desc">Get notified Sunday night when new weekly deals drop — before anyone else</div>
+            <span class="perk-tag">Members only</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">📊</div>
+          <div class="perk-info">
+            <div class="perk-name">Price Comparison</div>
+            <div class="perk-desc">See which store near you has the lowest price on the items you buy every week</div>
+            <span class="perk-tag">Members only</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">📋</div>
+          <div class="perk-info">
+            <div class="perk-name">Smart Grocery List</div>
+            <div class="perk-desc">Build your list and FamilySave automatically matches each item to the best deal near you</div>
+            <span class="perk-tag">Members only</span>
+          </div>
+        </div>
+        <div class="perk">
+          <div class="perk-ico">⛽</div>
+          <div class="perk-info">
+            <div class="perk-name">Fuel Point Tracker</div>
+            <div class="perk-desc">Track which stores are giving the most fuel points this week so you save at the pump too</div>
+            <span class="perk-tag">Members only</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free vs Premium comparison -->
+      <div class="prem-card">
+        <div class="prem-card-title">📋 Free vs Premium</div>
+        <table class="compare">
+          <tr><th>Feature</th><th>Free</th><th style="color:#1D9E75;">Premium</th></tr>
+          <tr><td>Find stores near you</td><td class="chk">✓</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Weekly deal counts</td><td class="chk">✓</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Weekly ad links</td><td class="chk">✓</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Restaurant discounts</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Fast food discounts</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Early deal alerts</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Price comparison</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Smart grocery list</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+          <tr><td>Fuel point tracker</td><td class="cross">✗</td><td class="chk highlight">✓</td></tr>
+        </table>
+      </div>
+
+      <!-- Join button -->
+      <button class="join-btn" onclick="alert('Premium sign-up coming soon! Check back shortly.')">⭐ Join Premium — $10/month</button>
+      <div class="join-note">Cancel anytime · Secure payment · Covers your whole family<br>Average family saves $200+ per month with Premium</div>
+
+    </div>
+  </div>
+
+  <!-- ── AD VIEWER PANEL ── -->
+  <div class="ad-panel" id="ad-panel">
+    <div class="ad-panel-header" id="ad-header" style="background:#1D9E75;">
+      <button class="ad-back" onclick="closeAd()">← Back</button>
+      <div class="ad-panel-title" id="ad-title">Weekly Ad</div>
+      <a class="ad-open-btn" id="ad-ext" href="#" target="_blank">Open ↗</a>
+    </div>
+    <div id="ad-content" style="flex:1;display:flex;flex-direction:column;">
+      <iframe class="ad-iframe" id="ad-iframe" src="" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+      <div class="ad-blocked" id="ad-blocked" style="display:none;">
+        <div class="bi">🛒</div>
+        <h3 id="blocked-name">Weekly Ad</h3>
+        <p>This store's website opens in your browser for the best experience. Tap below to see this week's deals!</p>
+        <a class="ad-blocked-btn" id="blocked-link" href="#" target="_blank">📰 Open Weekly Ad</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+var lat = null, lng = null;
+
+// ── STORE DATA ──
+// deals/bogo/hot/clips will be filled by scrapers
+// For now showing sample counts — replace with scraper data
+var STORES = [
+  {name:"Walmart",           color:"#0071CE", l:"W", map:"Walmart Supercenter",    ad:"https://www.walmart.com/store/finder",                      deals:47, bogo:3,  hot:8,  clips:12},
+  {name:"Sam's Club",        color:"#0067A0", l:"S", map:"Sams Club",              ad:"https://www.samsclub.com/instant-savings",                  deals:24, bogo:0,  hot:5,  clips:0},
+  {name:"Publix",            color:"#007041", l:"P", map:"Publix",                 ad:"https://www.publix.com/savings/weekly-ad",                  deals:38, bogo:14, hot:4,  clips:6},
+  {name:"Winn-Dixie",        color:"#C8102E", l:"W", map:"Winn Dixie",             ad:"https://www.winndixie.com/weeklyad",                        deals:31, bogo:9,  hot:3,  clips:8},
+  {name:"Albertsons",        color:"#E31837", l:"A", map:"Albertsons",             ad:"https://www.albertsons.com/weeklyad",                       deals:52, bogo:11, hot:7,  clips:15},
+  {name:"Safeway",           color:"#E31837", l:"S", map:"Safeway",                ad:"https://www.safeway.com/weeklyad",                          deals:52, bogo:11, hot:7,  clips:15},
+  {name:"Kroger",            color:"#CC0000", l:"K", map:"Kroger",                 ad:"https://www.kroger.com/weeklyad",                           deals:44, bogo:8,  hot:6,  clips:11},
+  {name:"Fry's Food Store",  color:"#CC0000", l:"F", map:"Frys Food Store",        ad:"https://www.frysfood.com/weeklyad",                         deals:44, bogo:8,  hot:6,  clips:11},
+  {name:"Target",            color:"#CC0000", l:"T", map:"Target",                 ad:"https://www.target.com/c/target-weekly-ad/-/N-6e1ze",       deals:29, bogo:5,  hot:4,  clips:7},
+  {name:"Aldi",              color:"#00529F", l:"A", map:"Aldi",                   ad:"https://www.aldi.us/en/weekly-specials/",                   deals:36, bogo:2,  hot:9,  clips:0},
+  {name:"Costco",            color:"#005DAA", l:"C", map:"Costco",                 ad:"https://www.costco.com/warehouse-savings.html",             deals:19, bogo:0,  hot:6,  clips:0},
+  {name:"Dollar General",    color:"#007932", l:"D", map:"Dollar General",         ad:"https://www.dollargeneral.com/weekly-ad.html",              deals:22, bogo:3,  hot:4,  clips:9},
+  {name:"Dollar Tree",       color:"#007932", l:"D", map:"Dollar Tree",            ad:"https://www.dollartree.com/catalog/category/view/id/1",     deals:15, bogo:0,  hot:2,  clips:0},
+  {name:"Food Lion",         color:"#E31837", l:"F", map:"Food Lion",              ad:"https://www.foodlion.com/weeklyspecials/",                  deals:33, bogo:7,  hot:4,  clips:8},
+  {name:"Harris Teeter",     color:"#E31837", l:"H", map:"Harris Teeter",          ad:"https://www.harristeeter.com/weeklyad",                     deals:28, bogo:6,  hot:3,  clips:7},
+  {name:"Bashas'",           color:"#005A9C", l:"B", map:"Bashas",                 ad:"https://www.bashas.com/weekly-ad/",                        deals:26, bogo:5,  hot:3,  clips:6},
+  {name:"Sprouts",           color:"#4CAF50", l:"S", map:"Sprouts Farmers Market", ad:"https://www.sprouts.com/weekly-ad/",                       deals:21, bogo:4,  hot:5,  clips:0},
+  {name:"Whole Foods",       color:"#00674B", l:"W", map:"Whole Foods Market",     ad:"https://www.wholefoodsmarket.com/sales-flyer",              deals:18, bogo:3,  hot:2,  clips:0},
+  {name:"Trader Joe's",      color:"#CC0000", l:"T", map:"Trader Joes",            ad:"https://www.traderjoes.com/home/products/list/new-items",   deals:16, bogo:0,  hot:4,  clips:0}
+];
+
+function findMe() {
+  var s = document.getElementById("loc-status");
+  var btn = document.getElementById("loc-btn");
+
+  // iOS Safari on file:// blocks geolocation - detect and guide user
+  if (window.location.protocol === "file:") {
+    s.innerHTML = "⚠️ To use GPS on iPhone, this app needs to be opened in <b>Safari</b> from a website link.<br><br>For now, please enter your zip code below 👇";
+    document.getElementById("zip-box").style.background = "rgba(255,255,100,0.15)";
+    document.getElementById("zip-input").focus();
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    s.textContent = "GPS not available. Please enter your zip code below.";
+    return;
+  }
+
+  btn.textContent = "Finding...";
+  btn.disabled = true;
+  s.textContent = "Finding your location...";
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      lat = pos.coords.latitude;
+      lng = pos.coords.longitude;
+      s.textContent = "✅ Location found! Loading stores...";
+      fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lng+"&localityLanguage=en")
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var city = d.city || d.locality || "Your area";
+          var state = d.principalSubdivisionCode ? d.principalSubdivisionCode.replace("US-","") : "";
+          goApp(city + (state ? ", "+state : ""));
+        })
+        .catch(function(){ goApp("Your area"); });
+    },
+    function(e) {
+      btn.textContent = "📍 Find Stores Near Me";
+      btn.disabled = false;
+      if (e.code === 1) {
+        s.innerHTML = "📵 Location access was denied.<br><br>On iPhone: go to <b>Settings → Safari → Location</b> and set to Allow. Then try again.<br><br>Or enter your zip code below 👇";
+      } else if (e.code === 3) {
+        s.textContent = "⏱ Location timed out. Please try again or enter your zip code below.";
+      } else {
+        s.textContent = "Could not get location. Please enter your zip code below.";
+      }
+    },
+    {timeout:12000, enableHighAccuracy:false, maximumAge:60000}
+  );
+}
+
+function doZip() {
+  var zip = document.getElementById("zip-input").value.trim();
+  if (zip.length !== 5) {
+    document.getElementById("loc-status").textContent = "Please enter a valid 5-digit zip code.";
+    return;
+  }
+  document.getElementById("loc-status").textContent = "Looking up " + zip + "...";
+  fetch("https://api.bigdatacloud.net/data/postal-code?postalCode="+zip+"&countryCode=US&localityLanguage=en")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var city = d.city || d.locality || zip;
+      var state = d.principalSubdivision || "";
+      lat = d.latitude || null;
+      lng = d.longitude || null;
+      goApp(city + (state ? ", "+state : ""));
+    })
+    .catch(function(){
+      // Even if lookup fails just use the zip
+      goApp("Zip code " + zip);
+    });
+}
+
+function goApp(city) {
+  document.getElementById("welcome").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  document.getElementById("app-loc").textContent = city ? "📍 " + city : "All stores";
+  buildStores(city);
+}
+
+function buildStores(city) {
+  // Tally totals for summary bar
+  var totalDeals = 0, totalBogo = 0, totalHot = 0;
+  STORES.forEach(function(s){ totalDeals += s.deals; totalBogo += s.bogo; totalHot += s.hot; });
+  document.getElementById("sum-stores").textContent = STORES.length;
+  document.getElementById("sum-deals").textContent = totalDeals;
+  document.getElementById("sum-bogo").textContent = totalBogo;
+  document.getElementById("sum-hot").textContent = totalHot;
+
+  var lbl = lat
+    ? "Stores near " + (city||"you") + " — this week's deal counts"
+    : "All stores — this week's deal counts";
+
+  var html = '<div class="sec-lbl">'+lbl+'</div>';
+
+  STORES.forEach(function(s) {
+    var mapUrl = lat
+      ? "https://www.google.com/maps/search/"+encodeURIComponent(s.map)+"/@"+lat+","+lng+",13z"
+      : "https://www.google.com/maps/search/"+encodeURIComponent(s.map+" near me");
+
+    html += '<div class="scard">'
+
+      // Store header
+      + '<div class="scard-top">'
+      + '<div class="scard-logo" style="background:'+s.color+'">'+s.l+'</div>'
+      + '<div class="scard-info">'
+      + '<div class="scard-name">'+s.name+'</div>'
+      + '<div class="scard-sub">'+(city ? "Near "+city : "Tap to find nearest location")+'</div>'
+      + '</div></div>'
+
+      // Deal count badges
+      + '<div class="scard-deals">'
+      + '<div class="badge sale"><div class="badge-n">'+s.deals+'</div><div class="badge-l">Deals</div></div>'
+      + '<div class="badge bogo"><div class="badge-n">'+s.bogo+'</div><div class="badge-l">BOGO</div></div>'
+      + '<div class="badge hot"><div class="badge-n">'+s.hot+'</div><div class="badge-l">🔥 Hot</div></div>'
+      + (s.clips > 0 ? '<div class="badge clip"><div class="badge-n">'+s.clips+'</div><div class="badge-l">✂️ Clips</div></div>' : '')
+      + '</div>'
+
+      // Scraper note
+      + '<div class="scraper-note">* Deal counts update weekly when scrapers run</div>'
+
+      // Action buttons
+      + '<div class="scard-btns">'
+      + '<a href="'+mapUrl+'" target="_blank" class="sbtn">📍 Find Nearest Store<small>Opens Google Maps</small></a>'
+      + '<a href="'+s.ad+'" target="_blank" class="sbtn grn">📰 See All Deals<small>This week\'s weekly ad</small></a>'
+      + '</div></div>';
+  });
+
+  document.getElementById("store-list").innerHTML = html;
+}
+
+
+var currentAdUrl = "";
+
+var locPopupOpen = false;
+
+function toggleLocPopup() {
+  locPopupOpen = !locPopupOpen;
+  var popup = document.getElementById("loc-popup");
+  if (locPopupOpen) {
+    popup.classList.add("open");
+    document.getElementById("loc-status2").textContent = "";
+  } else {
+    popup.classList.remove("open");
+  }
+}
+
+function changeToGPS() {
+  var s = document.getElementById("loc-status2");
+  s.textContent = "Finding your GPS location...";
+  if (window.location.protocol === "file:") {
+    s.textContent = "GPS requires https:// — please enter a zip code or pick a city.";
+    return;
+  }
+  if (!navigator.geolocation) {
+    s.textContent = "GPS not available. Try zip code instead.";
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      lat = pos.coords.latitude;
+      lng = pos.coords.longitude;
+      s.textContent = "✅ Location found! Loading...";
+      fetch("https://api.bigdatacloud.net/data/reverse-geocode-client?latitude="+lat+"&longitude="+lng+"&localityLanguage=en")
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var city = d.city || d.locality || "Your area";
+          var state = d.principalSubdivisionCode ? d.principalSubdivisionCode.replace("US-","") : "";
+          var cityStr = city + (state ? ", "+state : "");
+          updateLocation(cityStr);
+          toggleLocPopup();
+        })
+        .catch(function(){ updateLocation("Your area"); toggleLocPopup(); });
+    },
+    function(e) {
+      s.textContent = e.code===1 ? "Location denied. Try zip code or pick a city." : "Could not get GPS. Try zip code.";
+    },
+    {timeout:12000, enableHighAccuracy:false}
+  );
+}
+
+function changeToZip() {
+  var zip = document.getElementById("loc-zip2").value.trim();
+  var s = document.getElementById("loc-status2");
+  if (zip.length !== 5) { s.textContent = "Please enter a valid 5-digit zip code."; return; }
+  s.textContent = "Looking up zip code " + zip + "...";
+  fetch("https://api.bigdatacloud.net/data/postal-code?postalCode="+zip+"&countryCode=US&localityLanguage=en")
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      var city = d.city || d.locality || zip;
+      var state = d.principalSubdivision || "";
+      lat = d.latitude || null;
+      lng = d.longitude || null;
+      updateLocation(city + (state ? ", "+state : ""));
+      toggleLocPopup();
+    })
+    .catch(function(){ updateLocation("Zip " + zip); toggleLocPopup(); });
+}
+
+function changeToCity(cityName, cityLat, cityLng) {
+  lat = cityLat;
+  lng = cityLng;
+  updateLocation(cityName);
+  toggleLocPopup();
+}
+
+function updateLocation(cityStr) {
+  document.getElementById("app-loc").textContent = cityStr;
+  buildStores(cityStr);
+}
+
+
+function openAd(name, url, color) {
+  currentAdUrl = url;
+  document.getElementById("ad-title").textContent = name + " — Weekly Ad";
+  document.getElementById("ad-header").style.background = color;
+  document.getElementById("ad-ext").href = url;
+  document.getElementById("blocked-name").textContent = name;
+  document.getElementById("blocked-link").href = url;
+  document.getElementById("blocked-link").textContent = "📰 Open " + name + " Weekly Ad";
+
+  // Show panel
+  document.getElementById("ad-panel").classList.add("open");
+  document.body.style.overflow = "hidden";
+
+  // Try loading iframe
+  var iframe = document.getElementById("ad-iframe");
+  var blocked = document.getElementById("ad-blocked");
+  iframe.style.display = "block";
+  blocked.style.display = "none";
+  iframe.src = url;
+
+  // Detect if site blocks iframe - show fallback after 4 seconds
+  iframe.onerror = function() {
+    iframe.style.display = "none";
+    blocked.style.display = "flex";
+  };
+
+  // Most sites that block iframes won't fire onerror
+  // so also check after a short delay if iframe loaded anything
+  setTimeout(function() {
+    try {
+      // If we can't access iframe content it may be blocked
+      var h = iframe.contentWindow.document.body;
+      if (!h || h.innerHTML === "") {
+        iframe.style.display = "none";
+        blocked.style.display = "flex";
+      }
+    } catch(e) {
+      // Cross-origin block - site loaded but in external domain (normal)
+      // Leave iframe showing - it's working fine
+    }
+  }, 5000);
+}
+
+function closeAd() {
+  document.getElementById("ad-panel").classList.remove("open");
+  document.getElementById("ad-iframe").src = "";
+  document.body.style.overflow = "";
+}
+
+function joinPremium() {
+  // Check for Apple Pay support
+  if (window.ApplePaySession && ApplePaySession.canMakePayments()) {
+    alert('Apple Pay detected! Premium sign-up with Apple Pay is coming very soon. We will notify you!');
+  } else {
+    alert('Premium sign-up is coming soon! We will notify you when it launches. Thank you for your interest!');
+  }
+}
+
+function setPage(pg, el) {
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('show'); });
+  document.querySelectorAll('.nb').forEach(function(b){ b.classList.remove('on'); });
+  document.getElementById('pg-'+pg).classList.add('show');
+  el.classList.add('on');
+}
+</script>
+</body>
+</html>
